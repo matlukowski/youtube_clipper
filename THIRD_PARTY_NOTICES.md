@@ -18,4 +18,4 @@ Paczki macOS zawierają FFmpeg 8.0 ([commit `140fd653aed8cad774f991ba083e2d01e86
 
 Kompletne archiwa użytych źródeł są dostępne obok instalatorów jako `ffmpeg-macos-source.tar.gz` i `x264-macos-source.tar.gz`. Skrypt odtwarzający kompilację to [`desktop/build-macos.sh`](desktop/build-macos.sh). Kopia skryptu, konfiguracja FFmpeg i teksty licencji znajdują się wewnątrz aplikacji w `Contents/Resources/third_party`.
 
-Node.js 22.17.0 pochodzi z oficjalnych paczek dla Darwin arm64/x64. Suma SHA-256 jest sprawdzana podczas budowania, a plik LICENSE tej dystrybucji jest dołączony do aplikacji. Oficjalne archiwum wydania: https://nodejs.org/dist/v22.17.0/.
+Node.js 22.17.0 pochodzi z oficjalnej paczki dla Darwin arm64. Suma SHA-256 jest sprawdzana podczas budowania, a plik LICENSE tej dystrybucji jest dołączony do aplikacji. Oficjalne archiwum wydania: https://nodejs.org/dist/v22.17.0/.

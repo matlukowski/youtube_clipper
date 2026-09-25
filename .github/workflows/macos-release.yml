@@ -3,7 +3,7 @@ name: Build and test macOS installers
 on:
   workflow_dispatch:
   push:
-    branches: ['codex/macos-release']
+    branches: [main]
     paths: ['desktop/**', '.github/workflows/macos-release.yml']
 
 permissions:
@@ -11,15 +11,7 @@ permissions:
 
 jobs:
   build:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - runner: macos-15
-            arch: arm64
-          - runner: macos-15-intel
-            arch: x86_64
-    runs-on: ${{ matrix.runner }}
+    runs-on: macos-15
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
@@ -37,7 +29,7 @@ jobs:
         run: bash desktop/build-macos.sh
       - uses: actions/upload-artifact@v4
         with:
-          name: macos-${{ matrix.arch }}
+          name: macos-arm64
           path: |
             desktop/dist/*.dmg
             desktop/dist/*-macos-source.tar.gz
@@ -46,7 +38,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: diagnostics-${{ matrix.arch }}
+          name: diagnostics-arm64
           path: |
             desktop/build/macos-*/smoke.json
             desktop/build/YouTube Clipper/warn-*.txt
