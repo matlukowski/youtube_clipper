@@ -63,9 +63,15 @@ python -m PyInstaller --noconfirm --clean --onedir --windowed \
   --add-data 'web:web' --add-data "$BUILD/notices:third_party" \
   --add-binary "$PREFIX/bin/node:tools" --add-binary "$PREFIX/bin/ffmpeg:tools" desktop.py
 APP="$ROOT/dist/YouTube Clipper.app"
-/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString 1.1.6' "$APP/Contents/Info.plist"
-/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion 1.1.6' "$APP/Contents/Info.plist"
-/usr/libexec/PlistBuddy -c 'Set :LSMinimumSystemVersion 15.0' "$APP/Contents/Info.plist"
+python - "$APP/Contents/Info.plist" <<'PY'
+import plistlib
+import sys
+from pathlib import Path
+path = Path(sys.argv[1])
+info = plistlib.loads(path.read_bytes())
+info.update(CFBundleShortVersionString="1.1.6", CFBundleVersion="1.1.6", LSMinimumSystemVersion="15.0")
+path.write_bytes(plistlib.dumps(info))
+PY
 codesign --force --deep --sign - "$APP"
 codesign --verify --deep --strict "$APP"
 
