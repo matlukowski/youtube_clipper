@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="clipper-token" content="__CLIPPER_TOKEN__">
+  <meta name="color-scheme" content="dark">
+  <title>YouTube Clipper</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/styles.css">
+  <script type="module" src="/static/app.js"></script>
+</head>
+<body>
+  <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="cut" viewBox="0 0 24 24"><path d="m9 8 12 12M9 16 21 4M9 8 7 6m2 10-2 2"/><circle cx="5" cy="5" r="3"/><circle cx="5" cy="19" r="3"/></symbol>
+    <symbol id="play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></symbol>
+    <symbol id="download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+    <symbol id="folder" viewBox="0 0 24 24"><path d="M3 20V5h7l2 3h9v12Z"/></symbol>
+    <symbol id="link" viewBox="0 0 24 24"><path d="m9 15 6-6m-5-4 2-2a5 5 0 0 1 7 7l-2 2M7 12l-2 2a5 5 0 0 0 7 7l2-2"/></symbol>
+    <symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+  </defs></svg>
+  <div class="shell">
+    <header class="header">
+      <a class="brand" href="/" aria-label="YouTube Clipper — strona główna"><svg class="brand-mark"><use href="#cut"/></svg><span>YouTube Clipper</span></a>
+      <span class="header-description">Twój fragment. Twój plik.</span>
+      <span class="local-status" id="service-status"><span class="status-dot"></span>Lokalnie na tym komputerze</span>
+    </header>
+    <main>
+      <div class="page-heading"><h1>Wytnij to, co potrzebujesz.</h1><p>Kilka sekund z YouTube, zapisanych jako MP4.</p></div>
+      <form id="source-form" class="source-form">
+        <label for="source-url" class="sr-only">Link do filmu na YouTube</label>
+        <svg class="icon source-icon"><use href="#link"/></svg>
+        <input id="source-url" type="text" inputmode="url" placeholder="Wklej link do filmu na YouTube…" autocomplete="off" required maxlength="2048">
+        <button id="load-button" class="button primary" type="submit"><span>Wczytaj film</span><svg class="icon"><use href="#arrow"/></svg></button>
+      </form>
+      <p id="source-message" class="source-message" role="status" aria-live="polite">Obsługuje linki do filmów i Shorts. Bez pobierania całego filmu na start.</p>
+      <div id="global-error" class="error-message" role="alert" hidden></div>
+
+      <div class="editor">
+        <section class="viewer" aria-label="Podgląd filmu i oś czasu">
+          <div class="video-stage">
+            <div id="empty-stage" class="empty-stage">
+              <div class="frame-symbol" aria-hidden="true"><svg><use href="#play"/></svg></div>
+              <h2>Tu zaczyna się Twój klip.</h2>
+              <p>Wklej link powyżej, żeby zobaczyć film<br>i zaznaczyć najlepszy fragment.</p>
+              <div class="empty-sequence"><span>Link</span><svg class="icon"><use href="#arrow"/></svg><span>Fragment</span><svg class="icon"><use href="#arrow"/></svg><span>MP4</span></div>
+            </div>
+            <div id="youtube-player" hidden></div>
+          </div>
+          <p id="preview-error" class="preview-error" role="status" hidden></p>
+          <div class="video-caption"><h2 id="video-title">Podgląd filmu</h2><span id="video-meta">Czeka na link</span></div>
+
+          <fieldset id="timeline-controls" disabled>
+            <legend class="sr-only">Wybór fragmentu na osi czasu</legend>
+            <div class="timeline-toolbar"><span class="section-label">Wybrany fragment</span><div class="zoom-controls"><button id="zoom-out" class="small-button" type="button" aria-label="Oddal oś czasu">−</button><button id="zoom-selection" class="small-button fit-button" type="button">Przybliż fragment</button><button id="zoom-in" class="small-button" type="button" aria-label="Przybliż oś czasu">+</button></div></div>
+            <div id="timeline" class="timeline" aria-label="Oś czasu filmu">
+              <div id="ticks" class="ticks" aria-hidden="true"></div>
+              <div class="timeline-track"></div>
+              <div id="selection" class="selection"></div>
+              <div id="playhead" class="playhead" aria-hidden="true"></div>
+              <button id="start-handle" class="handle start-handle" type="button" role="slider" aria-label="Początek fragmentu" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0"><span></span></button>
+              <button id="end-handle" class="handle end-handle" type="button" role="slider" aria-label="Koniec fragmentu" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0"><span></span></button>
+            </div>
+            <div class="transport"><button id="preview-selection" class="button secondary" type="button"><svg class="icon"><use href="#play"/></svg>Odtwórz fragment</button><span class="current-time"><span>Pozycja</span><output id="current-time">00:00.00</output></span></div>
+          </fieldset>
+        </section>
+
+        <aside class="cut-panel" aria-labelledby="cut-heading">
+          <div class="panel-heading"><h2 id="cut-heading">Ustaw cięcie</h2><span class="format-badge">MP4</span></div>
+          <p class="panel-description">Wpisz czas lub przeciągnij granice na osi.</p>
+          <fieldset id="cut-controls" disabled>
+            <legend class="sr-only">Początek, koniec i eksport</legend>
+            <div class="time-group"><label for="start-time">Początek</label><div class="time-input-row"><button class="nudge" data-boundary="start" data-delta="-0.1" type="button" aria-label="Początek 0,1 sekundy wcześniej">−</button><input id="start-time" class="time-input" type="text" inputmode="text" value="00:00.00" spellcheck="false" aria-describedby="time-help"><button class="nudge" data-boundary="start" data-delta="0.1" type="button" aria-label="Początek 0,1 sekundy później">+</button></div><button id="mark-start" class="text-button mark-button" type="button">Ustaw w miejscu odtwarzania <kbd>I</kbd></button></div>
+            <div class="time-group"><label for="end-time">Koniec</label><div class="time-input-row"><button class="nudge" data-boundary="end" data-delta="-0.1" type="button" aria-label="Koniec 0,1 sekundy wcześniej">−</button><input id="end-time" class="time-input" type="text" inputmode="text" value="00:10.00" spellcheck="false" aria-describedby="time-help"><button class="nudge" data-boundary="end" data-delta="0.1" type="button" aria-label="Koniec 0,1 sekundy później">+</button></div><button id="mark-end" class="text-button mark-button" type="button">Ustaw w miejscu odtwarzania <kbd>O</kbd></button></div>
+            <p id="time-help" class="field-help">Format: min:sek lub godz:min:sek, np. 02:13.50</p>
+            <p id="range-error" class="range-error" role="alert" hidden></p>
+            <div class="duration-row"><span>Długość klipu</span><output id="clip-duration">10,00 <small>s</small></output></div>
+            <div class="quality-option"><label for="quality">Jakość zapisu</label><select id="quality" aria-describedby="quality-help"><option value="360">360p</option><option value="720">720p</option><option value="1080" selected>1080p</option><option value="1440">1440p (2K)</option><option value="2160">2160p (4K)</option></select><p id="quality-help">Niższe źródło nie będzie powiększane. Wyższa jakość może wydłużyć eksport.</p></div>
+            <label class="audio-option" for="mute-audio"><input id="mute-audio" type="checkbox"><span>Zapisz bez dźwięku</span></label>
+            <div class="export-details"><span id="audio-summary">Obraz i dźwięk</span><span id="quality-summary">do 1080p</span></div>
+            <button id="export-button" class="button primary export-button" type="button"><svg class="icon"><use href="#download"/></svg>Zapisz fragment</button>
+            <p class="export-note">Dokładne cięcie · MP4 na Twoim dysku</p>
+          </fieldset>
+          <div class="panel-footer"><svg class="icon"><use href="#folder"/></svg><span>Folder <button id="panel-folder" class="text-button" type="button">clips</button></span></div>
+        </aside>
+      </div>
+
+      <section class="exports" aria-labelledby="exports-heading"><div class="exports-heading"><div><h2 id="exports-heading">Twoje klipy <span id="clip-count">0</span></h2><p>Gotowe fragmenty i trwające eksporty.</p></div><div class="folder-actions"><button id="choose-folder" class="button secondary" type="button" hidden>Zmień folder zapisu</button><button id="open-folder" class="button secondary" type="button"><svg class="icon"><use href="#folder"/></svg>Otwórz folder</button></div></div><p id="output-folder" class="output-folder"></p><p id="exports-warning" class="error-message" role="status" hidden></p><div id="jobs" class="jobs"><div class="jobs-empty">Pierwszy zapisany fragment pojawi się tutaj.</div></div><p id="job-announcement" class="sr-only" aria-live="polite"></p></section>
+    </main>
+    <footer class="footer"><span>YouTube Clipper · wersja lokalna</span><span><kbd>I</kbd> początek <kbd>O</kbd> koniec <kbd>Ctrl</kbd> + <kbd>Enter</kbd> zapisz</span></footer>
+  </div>
+</body>
+</html>

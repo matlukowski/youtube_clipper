@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "colors": {
+    "canvas": "#101728",
+    "surface": "#18233a",
+    "text": "#f8f9ff",
+    "muted": "#b9c4de",
+    "accent": "#9d95fa",
+    "onAccent": "#101728",
+    "readingSurface": "#f2f4ff",
+    "readingText": "#172139"
+  },
+  "typography": {
+    "display": "Manrope",
+    "body": "Manrope",
+    "desktop": "Segoe UI"
+  },
+  "radius": {
+    "control": "11px",
+    "panel": "16px"
+  }
+}

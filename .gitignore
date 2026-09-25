@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+.vercel/
+.env*
+!.env.example
+*.log
+desktop/.venv/
+desktop/build/
+desktop/dist/
+desktop/**/__pycache__/
+desktop/**/*.pyc
+desktop/clips/
+*.exe
+.impeccable/mocks/
+.work/
+desktop/*.spec
