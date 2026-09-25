@@ -147,7 +147,7 @@ $('export-button').addEventListener('click',submitClip);
 $('mute-audio').addEventListener('change',()=>{$('audio-summary').textContent=$('mute-audio').checked?'Sam obraz, bez dźwięku':'Obraz i dźwięk';});
 $('quality').addEventListener('change',()=>{$('quality-summary').textContent=`do ${$('quality').value}p`;});
 document.addEventListener('keydown',event=>{
-  if(event.ctrlKey&&event.key==='Enter'){event.preventDefault();void submitClip();return;}
+  if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();void submitClip();return;}
   if(!state.ready||state.loading||event.ctrlKey||event.metaKey||event.altKey||event.target.matches('input,textarea,select,[contenteditable="true"]'))return;
   if(event.key.toLowerCase()==='i'){event.preventDefault();$('mark-start').click();}if(event.key.toLowerCase()==='o'){event.preventDefault();$('mark-end').click();}
 });
@@ -162,7 +162,7 @@ function showOutputFolder(path){
 $('choose-folder')?.addEventListener('click',async()=>{
   const button=$('choose-folder');button.disabled=true;showError('');
   try{
-    if(!window.pywebview?.api?.choose_output_folder)throw new Error('Wybór folderu jest dostępny w zainstalowanej aplikacji Windows.');
+    if(!window.pywebview?.api?.choose_output_folder)throw new Error('Wybór folderu jest dostępny w zainstalowanej aplikacji desktopowej.');
     const result=await window.pywebview.api.choose_output_folder();
     showOutputFolder(result.path);
     if(result.changed){state.jobSignature='';await refreshJobs();$('job-announcement').textContent=`Folder zapisu zmieniony na ${result.path}`;}
@@ -202,12 +202,12 @@ window.addEventListener('resize',renderTimeline);
 try{$('source-url').value=localStorage.getItem('clipper-last-url')||'';}catch{}
 renderRange();void refreshJobs();
 api('/api/health').then(health=>{
-  if(!health.ready)showError(`Brak zależności: ${[!health.ffmpeg?'FFmpeg':null,!health.node?'Node.js':null].filter(Boolean).join(', ')}. Uruchom Instaluj.cmd.`);
+  if(!health.ready)showError(`Brak zależności: ${[!health.ffmpeg?'FFmpeg':null,!health.node?'Node.js':null].filter(Boolean).join(', ')}. Zainstaluj ponownie aplikację z najnowszego instalatora.`);
   state.cloudWorker=health.features?.cloud_worker===true;
   if($('output-folder'))showOutputFolder(health.output_dir);
   if($('choose-folder'))$('choose-folder').hidden=health.features?.choose_folder!==true;
   state.deleteAvailable=health.features?.delete_clip===true;
-  $('exports-warning').textContent=state.deleteAvailable?'':'Działa starsza wersja serwera. Zamknij działającą aplikację i uruchom ponownie Uruchom.cmd, aby usuwać klipy.';
+  $('exports-warning').textContent=state.deleteAvailable?'':'Działa starsza wersja serwera. Zamknij działającą aplikację i uruchom ją ponownie, aby usuwać klipy.';
   $('exports-warning').hidden=state.deleteAvailable;
   state.jobSignature='';renderJobs(state.jobs);
 }).catch(error=>showError(error.message));

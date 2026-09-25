@@ -31,7 +31,7 @@ tar -xzf "$BUILD/x264-source.tar.gz" -C "$BUILD"
   PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig" ./configure --prefix="$PREFIX" \
     --disable-autodetect --disable-shared --enable-static --enable-gpl --enable-libx264 \
     --enable-securetransport --enable-zlib --enable-bzlib --enable-iconv \
-    --disable-doc --disable-debug --disable-ffplay --disable-ffprobe
+    --disable-doc --disable-debug --disable-ffplay
   make -j"$(sysctl -n hw.logicalcpu)"
   make install
 )
@@ -59,7 +59,7 @@ node --test tests/*.test.mjs
 python -m PyInstaller --noconfirm --clean --onedir --windowed \
   --name 'YouTube Clipper' --target-arch "$ARCH" \
   --osx-bundle-identifier 'com.matlukowski.youtubeclipper' \
-  --collect-all yt_dlp --collect-all webview \
+  --collect-all yt_dlp --collect-all yt_dlp_ejs --collect-all webview \
   --add-data 'web:web' --add-data "$BUILD/notices:third_party" \
   --add-binary "$PREFIX/bin/node:tools" --add-binary "$PREFIX/bin/ffmpeg:tools" desktop.py
 APP="$ROOT/dist/YouTube Clipper.app"

@@ -61,11 +61,11 @@ def friendly_error(detail: str) -> str:
     if "private" in lowered or "unavailable" in lowered or "removed" in lowered:
         return "Ten film jest niedostępny lub prywatny. Sprawdź link w YouTube."
     if "403" in lowered or "forbidden" in lowered:
-        return "YouTube odrzucił pobieranie. Wczytaj film ponownie; jeśli to nie pomoże, uruchom Aktualizuj.cmd."
+        return "YouTube odrzucił pobieranie. Wczytaj film ponownie; jeśli to nie pomoże, pobierz najnowszą wersję aplikacji."
     if "429" in lowered or "too many" in lowered:
         return "YouTube ograniczył liczbę zapytań. Odczekaj chwilę i spróbuj ponownie."
     if "format" in lowered or "challenge" in lowered:
-        return "Nie udało się uzyskać strumienia filmu. Uruchom Aktualizuj.cmd i spróbuj ponownie."
+        return "Nie udało się uzyskać strumienia filmu. Pobierz najnowszą wersję aplikacji i spróbuj ponownie."
     return "Nie udało się pobrać filmu. Sprawdź połączenie i dostępność filmu, a następnie spróbuj ponownie."
 
 
