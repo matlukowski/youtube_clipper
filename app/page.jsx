@@ -1,4 +1,6 @@
 const repository = "https://github.com/matlukowski/youtube_clipper";
+const macDownload = `${repository}/releases/latest/download/YouTube-Clipper-macOS-arm64.dmg`;
+const intelDownload = `${repository}/releases/latest/download/YouTube-Clipper-macOS-x86_64.dmg`;
 const download = `${repository}/releases/latest/download/YouTube-Clipper-Setup.exe`;
 
 function Mark({ className = "" }) {
@@ -38,7 +40,7 @@ export default function Home() {
       <header className="site-header container">
         <a className="brand" href="#gora" aria-label="YouTube Clipper — początek strony"><Mark className="brand-mark" /><span>YouTube Clipper</span></a>
         <nav aria-label="Nawigacja główna"><a href="#jak-to-dziala">Jak to działa</a><a href="#pobierz">Pobierz</a><a href={repository} target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a></nav>
-        <span className="header-platform"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4.5 10.5 3v8H2Zm10-1.8L22 1v10H12Zm-10 10H10.5v8L2 19Zm10 0h10v10l-10-1.7Z" fill="currentColor" /></svg> Windows</span>
+        <span className="header-platform"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4.5 10.5 3v8H2Zm10-1.8L22 1v10H12Zm-10 10H10.5v8L2 19Zm10 0h10v10l-10-1.7Z" fill="currentColor" /></svg> Windows + macOS</span>
       </header>
 
       <main>
@@ -46,8 +48,9 @@ export default function Home() {
           <div className="hero-copy">
             <h1 id="hero-title">Zachowaj<br /><span>najlepszy moment.</span></h1>
             <p>Wytnij fragment filmu z YouTube i zapisz go na komputerze — z dźwiękiem lub bez.</p>
-            <div className="hero-actions"><a className="button button-primary" href={download}><DownloadIcon /> Pobierz na Windows <Arrow /></a><a className="button button-text" href={repository} target="_blank" rel="noopener noreferrer">Zobacz na GitHubie <Arrow diagonal /></a></div>
-            <div className="download-meta"><span className="meta-dot" /> Darmowa aplikacja na Windows <span className="meta-divider" /> Wersja 1.1.6</div>
+            <div className="hero-actions"><a className="button button-primary" href={download}><DownloadIcon /> Pobierz na Windows <Arrow /></a><a className="button button-secondary" href={macDownload} aria-describedby="mac-requirements"><DownloadIcon /> Pobierz na macOS <Arrow /></a><a className="button button-text" href={repository} target="_blank" rel="noopener noreferrer">Zobacz na GitHubie <Arrow diagonal /></a></div>
+            <p className="platform-note">macOS 15+ · Apple Silicon. <a href={intelDownload}>Wersja dla Intel</a></p>
+            <div className="download-meta"><span className="meta-dot" /> Darmowa aplikacja na Windows i macOS <span className="meta-divider" /> Wersja 1.1.6</div>
           </div>
           <TimelineArt />
         </section>
@@ -62,7 +65,7 @@ export default function Home() {
 
     <section className="detail-section" aria-labelledby="detail-heading"><div className="container detail-layout"><div className="detail-graphic" aria-hidden="true"><span className="detail-line" /><span className="detail-range"><i /><i /></span><span className="detail-caption">TYLKO WYBRANY FRAGMENT</span></div><div className="detail-copy"><h2 id="detail-heading">Masz kontrolę nad tym, co zostaje.</h2><p>Przytnij dokładnie ten zakres, którego potrzebujesz. Gotowy plik MP4 trafia do folderu na Twoim komputerze.</p><div className="sound-choice"><span>DŹWIĘK</span><strong>tak <i /> nie</strong></div></div></div></section>
 
-    <section className="download-section" id="pobierz" aria-labelledby="download-heading"><div className="container download-layout"><div><span className="download-label">YOUTUBE CLIPPER 1.1.6</span><h2 id="download-heading">Twój następny klip zaczyna się tutaj.</h2><p>Pobierz instalator na Windows 10/11 (64-bit). Aplikacja działa na Twoim komputerze.</p></div><div className="download-box"><a className="button button-primary" href={download}><DownloadIcon /> Pobierz instalator <Arrow /></a><a href={`${repository}/releases/latest`} target="_blank" rel="noopener noreferrer">Zobacz wydanie na GitHubie <Arrow diagonal /></a><p>Instalator nie jest podpisany cyfrowo, więc Windows może wyświetlić ostrzeżenie przy uruchamianiu. Zawiera FFmpeg (GPLv3) i Node.js. <a href={`${repository}/blob/main/THIRD_PARTY_NOTICES.md`} target="_blank" rel="noopener noreferrer">Licencje i źródła</a>.</p></div></div></section>
+    <section className="download-section" id="pobierz" aria-labelledby="download-heading"><div className="container download-layout"><div><span className="download-label">YOUTUBE CLIPPER 1.1.6</span><h2 id="download-heading">Twój następny klip zaczyna się tutaj.</h2><p>Wybierz Windows 10/11 (64-bit) lub macOS 15 i nowszy. Aplikacja działa na Twoim komputerze.</p></div><div className="download-box"><a className="button button-primary" href={download}><DownloadIcon /> Pobierz na Windows <Arrow /></a><a className="button button-secondary" href={macDownload} aria-describedby="mac-requirements"><DownloadIcon /> Pobierz na macOS <Arrow /></a><p id="mac-requirements">macOS: procesory Apple (M1 i nowsze). Masz starszego Maca? <a href={intelDownload}>Pobierz wersję Intel</a>.</p><a href={`${repository}/releases/latest`} target="_blank" rel="noopener noreferrer">Zobacz wydanie na GitHubie <Arrow diagonal /></a><p>Instalatory nie mają podpisu wydawcy. Windows może wyświetlić ostrzeżenie. Na Macu przeciągnij aplikację do folderu Aplikacje. Jeśli system zablokuje jej uruchomienie, użyj „Otwórz mimo to” w Ustawieniach systemowych → Prywatność i ochrona. Zawierają FFmpeg i Node.js. <a href={`${repository}/blob/main/THIRD_PARTY_NOTICES.md`} target="_blank" rel="noopener noreferrer">Licencje i źródła</a>.</p></div></div></section>
 
     <footer className="footer"><div className="container footer-content"><a className="brand" href="#gora"><Mark className="brand-mark" /><span>YouTube Clipper</span></a><p>Darmowa aplikacja do wycinania fragmentów filmów z YouTube.</p><a href={repository} target="_blank" rel="noopener noreferrer">GitHub <Arrow diagonal /></a></div></footer>
   </>;

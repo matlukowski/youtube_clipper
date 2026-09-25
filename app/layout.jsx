@@ -13,7 +13,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
 export const metadata = {
   metadataBase: new URL(siteUrl),
   title: "YouTube Clipper — zachowaj najlepszy moment",
-  description: "Darmowa aplikacja na Windows do wycinania fragmentów filmów z YouTube. Wybierz zakres i zapisz MP4 na dysku — z dźwiękiem lub bez.",
+  description: "Darmowa aplikacja na Windows i macOS do wycinania fragmentów filmów z YouTube. Wybierz zakres i zapisz MP4 na dysku — z dźwiękiem lub bez.",
   openGraph: {
     title: "YouTube Clipper — zachowaj najlepszy moment",
     description: "Wytnij fragment filmu z YouTube i zapisz go na komputerze — z dźwiękiem lub bez.",
