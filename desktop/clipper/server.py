@@ -5,6 +5,8 @@ import shutil
 import hmac
 import hashlib
 import time
+import sys
+import subprocess
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Literal
@@ -181,8 +183,10 @@ def create_app(output_dir=None, source=None, worker_secret=None, desktop_mode=Fa
     def open_folder():
         if worker_secret:
             raise HTTPException(409, "Folder klipów jest dostępny tylko w wersji lokalnej.")
-        if os.name == "nt":
+        if sys.platform == "win32":
             os.startfile(str(queue.root))
+        elif sys.platform == "darwin":
+            subprocess.run(["/usr/bin/open", str(queue.root)], check=True, timeout=10)
         return {"path": str(queue.root)}
 
     if not worker_secret:

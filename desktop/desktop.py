@@ -1,4 +1,4 @@
-"""Windows desktop entry point for the existing local editor and export service."""
+"""Desktop entry point for the local editor and export service."""
 
 import os
 import json
@@ -32,6 +32,8 @@ main{text-align:center;max-width:36rem;padding:2rem}p{color:#bbc5dc}</style>
 
 
 def app_data_dir():
+    if sys.platform == "darwin":
+        return Path.home() / "Library" / "Application Support" / "YouTube Clipper"
     return Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local")) / "YouTube Clipper"
 
 
@@ -146,7 +148,12 @@ def main():
         bridge._window = webview.create_window("YouTube Clipper", html=STARTUP_HTML, js_api=bridge,
                                               width=1280, height=850, min_size=(850, 600),
                                               background_color="#101728")
-        webview.start(show_when_ready, (bridge._window, url, thread), gui="edgechromium")
+        callback = show_when_ready
+        if len(sys.argv) == 3 and sys.argv[1] == "--smoke-test":
+            from clipper.smoke import check_window
+            callback = check_window
+        webview.start(callback, (bridge._window, url, thread),
+                      gui="cocoa" if sys.platform == "darwin" else "edgechromium")
     finally:
         server.should_exit = True
         thread.join(timeout=5)

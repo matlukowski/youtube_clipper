@@ -1,6 +1,11 @@
 import json
 import os
+import sys
 from contextlib import nullcontext
+from pathlib import Path
+
+import pytest
+from fastapi.testclient import TestClient
 
 from desktop import DesktopApi, configure_runtime, show_when_ready
 from clipper.server import create_app
@@ -12,6 +17,7 @@ def test_desktop_renames_existing_clip_directory(tmp_path, monkeypatch):
     (old / "sample.mp4").write_bytes(b"mp4")
     (old / "abc.json").write_text(json.dumps({"filename": "sample.mp4"}), encoding="utf-8")
     monkeypatch.setenv("LOCALAPPDATA", str(tmp_path))
+    monkeypatch.setattr("desktop.app_data_dir", lambda: tmp_path / "YouTube Clipper")
     monkeypatch.setenv("CLIPS_DIR", "")
     monkeypatch.setenv("WORKER_SECRET", "must-not-enable-cloud-mode")
 
@@ -36,6 +42,7 @@ def test_desktop_merges_older_clips_without_overwriting_newer_ones(tmp_path, mon
     (old / "other.mp4").write_bytes(b"other")
     (old / "other.json").write_text(json.dumps({"filename": "other.mp4"}), encoding="utf-8")
     monkeypatch.setenv("LOCALAPPDATA", str(tmp_path))
+    monkeypatch.setattr("desktop.app_data_dir", lambda: tmp_path / "YouTube Clipper")
     monkeypatch.setenv("CLIPS_DIR", "")
 
     configure_runtime()
@@ -53,6 +60,7 @@ def test_desktop_restores_selected_clip_folder(tmp_path, monkeypatch):
     settings.parent.mkdir()
     settings.write_text(json.dumps({"clips_dir": str(selected)}), encoding="utf-8")
     monkeypatch.setenv("LOCALAPPDATA", str(tmp_path))
+    monkeypatch.setattr("desktop.app_data_dir", lambda: tmp_path / "YouTube Clipper")
 
     configure_runtime()
 
@@ -111,3 +119,24 @@ def test_startup_window_shows_failure_when_service_exits():
     show_when_ready(window, "http://127.0.0.1:12345", Thread())
 
     assert "Nie udało się uruchomić" in window.error_html
+
+
+@pytest.mark.parametrize("platform", ["darwin", "win32"])
+def test_native_app_data_directory(platform, tmp_path, monkeypatch):
+    from desktop import app_data_dir
+    monkeypatch.setattr(sys, "platform", platform)
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "Local"))
+    expected = tmp_path / "Library" / "Application Support" if platform == "darwin" else tmp_path / "Local"
+    assert app_data_dir() == expected / "YouTube Clipper"
+
+
+def test_macos_open_folder_passes_path_as_single_argument(tmp_path, monkeypatch):
+    calls = []
+    monkeypatch.setattr("clipper.server.sys.platform", "darwin")
+    monkeypatch.setattr("clipper.server.subprocess.run", lambda *args, **kwargs: calls.append((args, kwargs)))
+    app = create_app(tmp_path)
+    with TestClient(app) as client:
+        response = client.post("/api/folder", headers={"X-Clipper-Token": app.state.token})
+    assert response.status_code == 200
+    assert calls == [((["/usr/bin/open", str(tmp_path)],), {"check": True, "timeout": 10})]

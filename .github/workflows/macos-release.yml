@@ -1,0 +1,57 @@
+name: Build and test macOS installers
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['codex/macos-release']
+    paths: ['desktop/**', '.github/workflows/macos-release.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            arch: arm64
+          - runner: macos-15-intel
+            arch: x86_64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.17.0'
+      - name: Install build tools and Python dependencies
+        run: |
+          brew install nasm pkgconf
+          python -m pip install -r desktop/requirements-desktop.txt -r desktop/requirements-dev.txt
+      - name: Python and editor tests
+        working-directory: desktop
+        run: |
+          python -m pytest tests -q
+          node --test tests/*.test.mjs
+      - name: Compile, package and test native application
+        run: bash desktop/build-macos.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-${{ matrix.arch }}
+          path: |
+            desktop/dist/*.dmg
+            desktop/dist/*-macos-source.tar.gz
+            desktop/build/macos-*/smoke.json
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: diagnostics-${{ matrix.arch }}
+          path: |
+            desktop/build/macos-*/smoke.json
+            desktop/build/YouTube Clipper/warn-*.txt
