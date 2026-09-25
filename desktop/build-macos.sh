@@ -30,7 +30,7 @@ tar -xzf "$BUILD/x264-source.tar.gz" -C "$BUILD"
   cd "$BUILD/FFmpeg-$FFMPEG_REF"
   PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig" ./configure --prefix="$PREFIX" \
     --disable-autodetect --disable-shared --enable-static --enable-gpl --enable-libx264 \
-    --enable-securetransport --enable-zlib --enable-bzlib --enable-iconv \
+    --enable-securetransport --enable-zlib --enable-bzlib --enable-iconv --extra-libs=-liconv \
     --disable-doc --disable-debug --disable-ffplay
   make -j"$(sysctl -n hw.logicalcpu)"
   make install
@@ -57,7 +57,7 @@ node --test tests/*.test.mjs
 
 # PyInstaller collects the native Cocoa backend and all yt-dlp runtime modules.
 python -m PyInstaller --noconfirm --clean --onedir --windowed \
-  --name 'YouTube Clipper' --target-arch "$ARCH" \
+  --name 'YouTube Clipper' --target-arch "$ARCH" --icon 'installer/YouTube Clipper.icns' \
   --osx-bundle-identifier 'com.matlukowski.youtubeclipper' \
   --collect-all yt_dlp --collect-all yt_dlp_ejs --collect-all webview \
   --add-data 'web:web' --add-data "$BUILD/notices:third_party" \
