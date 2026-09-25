@@ -8,6 +8,8 @@ Pobierz [najnowszy instalator Windows](https://github.com/matlukowski/youtube_cl
 
 Instalator jest przeznaczony dla Windows 10/11 x64. Nie jest podpisany cyfrowo, dlatego Windows może wyświetlić ostrzeżenie przy uruchamianiu.
 
+Instalator zawiera FFmpeg (GPLv3) i Node.js. Informacje licencyjne oraz źródło odpowiadającej wersji FFmpeg są w [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) i zasobach wydania.
+
 ## Jak działa
 
 1. Wklej link do publicznego filmu lub Shorts na YouTube.

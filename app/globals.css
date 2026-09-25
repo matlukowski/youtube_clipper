@@ -121,6 +121,7 @@ svg { display: block; }
 .download-box > a:not(.button):hover { color: var(--violet); }
 .download-box > a svg { width: 16px; height: 16px; }
 .download-box p { max-width: 380px; margin: 0; color: #aab7d4; font-size: 11px; line-height: 1.65; }
+.download-box p a { color: var(--white); text-decoration: underline; }
 .footer { background: #0c1322; color: var(--muted); }
 .footer-content { min-height: 115px; display: flex; align-items: center; gap: 35px; }
 .footer .brand { color: var(--white); font-size: 15px; }

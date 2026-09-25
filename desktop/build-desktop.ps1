@@ -15,6 +15,7 @@ $ffmpeg = (Get-Command ffmpeg.exe -ErrorAction Stop).Source
 & $python -m PyInstaller --noconfirm --clean --onedir --windowed --name 'YouTube Clipper' --icon 'installer\YouTube Clipper.ico' `
   --collect-all yt_dlp --collect-all webview `
   --add-data 'web:web' `
+  --add-data 'third_party:third_party' `
   --add-binary "${node}:tools" `
   --add-binary "${ffmpeg}:tools" `
   desktop.py
