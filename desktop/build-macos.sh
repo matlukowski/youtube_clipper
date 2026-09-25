@@ -51,6 +51,10 @@ cp build-macos.sh "$BUILD/notices/"
 cp "$BUILD/ffmpeg-source.tar.gz" "dist/ffmpeg-macos-source.tar.gz"
 cp "$BUILD/x264-source.tar.gz" "dist/x264-macos-source.tar.gz"
 
+# Integration tests must use the same encoder that will ship in the application.
+PATH="$PREFIX/bin:$PATH" python -m pytest tests -q
+node --test tests/*.test.mjs
+
 # PyInstaller collects the native Cocoa backend and all yt-dlp runtime modules.
 python -m PyInstaller --noconfirm --clean --onedir --windowed \
   --name 'YouTube Clipper' --target-arch "$ARCH" \

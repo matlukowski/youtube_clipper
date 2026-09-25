@@ -33,11 +33,6 @@ jobs:
         run: |
           brew install nasm pkgconf
           python -m pip install -r desktop/requirements-desktop.txt -r desktop/requirements-dev.txt
-      - name: Python and editor tests
-        working-directory: desktop
-        run: |
-          python -m pytest tests -q
-          node --test tests/*.test.mjs
       - name: Compile, package and test native application
         run: bash desktop/build-macos.sh
       - uses: actions/upload-artifact@v4
